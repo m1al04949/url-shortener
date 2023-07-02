@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/m1al04949/url-shortener/internal/config"
+	"github.com/m1al04949/url-shortener/internal/http-server/handlers/url/save"
 	mwLogger "github.com/m1al04949/url-shortener/internal/http-server/middleware/logger"
 	"github.com/m1al04949/url-shortener/internal/lib/logger/handlers/slogpretty"
 	"github.com/m1al04949/url-shortener/internal/lib/logger/logslog"
@@ -37,9 +38,6 @@ func main() {
 		os.Exit(1) // If defer func not exists
 	}
 
-	_ = storage
-
-	//TODO: "chi render"
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
@@ -47,6 +45,8 @@ func main() {
 	router.Use(mwLogger.New(log))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
+
+	router.Post("/url", save.New(log, storage))
 
 	//TODO: run server
 }
