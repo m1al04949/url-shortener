@@ -29,7 +29,7 @@ func main() {
 	storage, err := sqlite.New(cfg.StoragePath)
 	if err != nil {
 		log.Error("failed to init storage", logslog.Err(err))
-		os.Exit(1)
+		os.Exit(1) // If defer func not exists
 	}
 
 	_ = storage
