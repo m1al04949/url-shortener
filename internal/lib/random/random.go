@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func NewRandimString(aliasLength int) string {
+func NewRandomString(aliasLength int) string {
 	chars := []rune("ABCDEFGIHJKLMNOPQRSTVUWXYZ" +
 		"abcdefghijklmnopqrstvuwxyz" +
 		"0123456789")

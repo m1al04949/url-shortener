@@ -27,6 +27,7 @@ type Response struct {
 // TODO: move to config
 const aliasLength = 7
 
+//go:generate go run github.com/vektra/mockety/v2@v2.28.2 --name=URLSaver
 type URLSaver interface {
 	SaveURL(urlToSave string, alias string) (int64, error)
 }
@@ -65,7 +66,7 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 
 		alias := req.Alias
 		if alias == "" {
-			alias = random.NewRandimString(aliasLength)
+			alias = random.NewRandomString(aliasLength)
 			// TODO: generate alias is existsha3nb
 		}
 
