@@ -13,6 +13,7 @@ import (
 	"golang.org/x/exp/slog"
 )
 
+//go:generate go run github.com/vektra/mockery/v2 --name=URLGetter
 type URLGetter interface {
 	GetURL(alias string) (string, error)
 }
