@@ -25,8 +25,8 @@ func New(storagePath string) (*Storage, error) {
 	}
 
 	stmt, err := db.Prepare(`
-	CREATE TABLE IF NOT EXISTS url(
-		id INTEGER PRIMATY KEY,
+	CREATE TABLE IF NOT EXISTS url_alias(
+		id INTEGER PRIMARY KEY,
 		alias TEXT NOT NULL UNIQUE,
 		url TEXT NOT NULL);
 	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);
@@ -46,7 +46,7 @@ func New(storagePath string) (*Storage, error) {
 func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 	const op = "storage.sqlite.SaveURL"
 
-	stmt, err := s.db.Prepare("INSERT INTO url(url, alias) VALUES(?, ?)")
+	stmt, err := s.db.Prepare("INSERT INTO url_alias(url, alias) VALUES(?, ?)")
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
@@ -71,7 +71,7 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 func (s *Storage) GetURL(alias string) (string, error) {
 	const op = "storage.sqlite.GetURL"
 
-	stmt, err := s.db.Prepare("SELECT url FROM url WHERE alias = ?")
+	stmt, err := s.db.Prepare("SELECT url FROM url_alias WHERE alias = ?")
 	if err != nil {
 		return "", fmt.Errorf("%s: prepare statement %w", op, err)
 	}
@@ -94,7 +94,7 @@ func (s *Storage) GetURL(alias string) (string, error) {
 func (s *Storage) DeleteURL(alias string) error {
 	const op = "storage.sqlite.DeleteURL"
 
-	stmt, err := s.db.Prepare("DELETE FROM url WHERE alias = ?")
+	stmt, err := s.db.Prepare("DELETE FROM url_alias WHERE alias = ?")
 	if err != nil {
 		return fmt.Errorf("%s: prepare statement %w", op, err)
 	}

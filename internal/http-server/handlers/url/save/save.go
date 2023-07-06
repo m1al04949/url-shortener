@@ -15,7 +15,7 @@ import (
 )
 
 type Request struct {
-	URL   string `json:"url" validate:"required, url"`
+	URL   string `json:"url" validate:"required,url"`
 	Alias string `json:"alias,omitempty"`
 }
 
@@ -67,7 +67,7 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 		alias := req.Alias
 		if alias == "" {
 			alias = random.NewRandomString(aliasLength)
-			// TODO: generate alias is existsha3nb
+			// TODO: generate alias is exists
 		}
 
 		id, err := urlSaver.SaveURL(req.URL, alias)
