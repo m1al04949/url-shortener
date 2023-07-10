@@ -7,5 +7,8 @@
             "database": "${workspaceFolder:url-shortener}/storage/storage.db"
         }
     ],
-    "sqltools.useNodeRuntime": true
+    "sqltools.useNodeRuntime": true,
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///c%3A/Users/gorbunovia/VS%20Projects/url-shortener/tests/.github/workflows/deploy.yaml"
+    }
 }
