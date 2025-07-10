@@ -32,6 +32,17 @@ type URLSaver interface {
 	SaveURL(urlToSave string, alias string) (int64, error)
 }
 
+// CreateShortURL godoc
+// @Summary Создать короткую ссылку
+// @Description Преобразует длинный URL в короткий
+// @Tags url
+// @Accept  json
+// @Produce  json
+// @Param   url body save.Request true "URL для сокращения"
+// @Success 200 {object} save.Response
+// @Failure 400 {object} resp.Response
+// @Failure 500 {object} resp.Response
+// @Router /api [post]
 func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.url.save.New"

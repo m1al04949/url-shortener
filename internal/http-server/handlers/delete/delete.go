@@ -14,14 +14,26 @@ import (
 )
 
 type Response struct {
-	resp.Response
-	Alias string `json:"alias"`
+	Response resp.Response
+	Alias    string `json:"alias"`
 }
 
 type URLDeleter interface {
 	DeleteURL(alias string) error
 }
 
+// DeleteShortURL godoc
+// @Summary Удалять короткую ссылку
+// @Description Удаляет короткий URL
+// @Tags url
+// @Accept  json
+// @Produce  json
+// @Param alias path string true "Алиас короткой ссылки"
+// @Success 200 {object} Response "Successfully deleted"
+// @Failure 400 {object} resp.Response "Invalid request"
+// @Failure 404 {object} resp.Response "URL not found"
+// @Failure 500 {object} resp.Response "Internal server error"
+// @Router /api/{alias} [delete]
 func New(log *slog.Logger, urlDeleter URLDeleter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.url.delete.New"
