@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/m1al04949/url-shortener/internal/storage"
-	"github.com/mattn/go-sqlite3"
+	"modernc.org/sqlite"
+	sqlerr "modernc.org/sqlite/lib"
 )
 
 type Storage struct {
@@ -17,28 +17,26 @@ type Storage struct {
 func New(storagePath string) (*Storage, error) {
 	const op = "storage.sqlite.New"
 
-	sPath := os.Getenv("ROOT_PATH") + storagePath
-
-	db, err := sql.Open("sqlite3", sPath)
+	db, err := sql.Open("sqlite", fmt.Sprintf("file:%s", storagePath))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
+	// Migrator
+	// stmt, err := db.Prepare(`
+	// CREATE TABLE IF NOT EXISTS url_alias(
+	// 	id INTEGER PRIMARY KEY,
+	// 	alias TEXT NOT NULL UNIQUE,
+	// 	url TEXT NOT NULL);
+	// CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);
+	// `)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("%s: %w", op, err)
+	// }
 
-	stmt, err := db.Prepare(`
-	CREATE TABLE IF NOT EXISTS url_alias(
-		id INTEGER PRIMARY KEY,
-		alias TEXT NOT NULL UNIQUE,
-		url TEXT NOT NULL);
-	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);
-	`)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	_, err = stmt.Exec()
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
+	// _, err = stmt.Exec()
+	// if err != nil {
+	// 	return nil, fmt.Errorf("%s: %w", op, err)
+	// }
 
 	return &Storage{db: db}, nil
 }
@@ -53,8 +51,15 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 
 	res, err := stmt.Exec(urlToSave, alias)
 	if err != nil {
-		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
-			return 0, fmt.Errorf("%s: %w", op, storage.ErrURLExists)
+		var sqliteErr *sqlite.Error
+
+		if errors.As(err, &sqliteErr) {
+			switch sqliteErr.Code() {
+			case sqlerr.SQLITE_CONSTRAINT_UNIQUE:
+				return 0, fmt.Errorf("%s: %w", op, storage.ErrURLExists)
+			default:
+				return 0, fmt.Errorf("%s: sqlite error [%d]: %w", op, sqliteErr.Code(), err)
+			}
 		}
 
 		return 0, fmt.Errorf("%s: %w", op, err)
@@ -101,8 +106,15 @@ func (s *Storage) DeleteURL(alias string) error {
 
 	_, err = stmt.Exec(alias)
 	if err != nil {
-		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
-			return fmt.Errorf("%s: %w", op, storage.ErrURLNotFound)
+		var sqliteErr *sqlite.Error
+
+		if errors.As(err, &sqliteErr) {
+			switch sqliteErr.Code() {
+			case sqlerr.SQLITE_CONSTRAINT_UNIQUE:
+				return fmt.Errorf("%s: %w", op, storage.ErrURLNotFound)
+			default:
+				return fmt.Errorf("%s: sqlite error [%d]: %w", op, sqliteErr.Code(), err)
+			}
 		}
 
 		return fmt.Errorf("%s: %w", op, err)
