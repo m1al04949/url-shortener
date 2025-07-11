@@ -6,3 +6,8 @@ http_server:
   idle_timeout: 60s
   user: "myuser"
   password: "mypass"
+clients:
+  sso:
+    address: "localhost:44044"
+    timeout: 1m
+    retries_count: 3
