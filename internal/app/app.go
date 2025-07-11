@@ -13,6 +13,7 @@ import (
 	"github.com/m1al04949/url-shortener/internal/lib/logger/logslog"
 	"github.com/m1al04949/url-shortener/internal/pkg/setlog"
 	"github.com/m1al04949/url-shortener/internal/storage/sqlite"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"golang.org/x/exp/slog"
 )
 
@@ -33,8 +34,8 @@ func RunServer() error {
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
-	//TODO: logger requests: router.Use(middleware.Logger)
 	router.Use(mwLogger.New(log))
+	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
@@ -46,8 +47,8 @@ func RunServer() error {
 		r.Post("/", save.New(log, storage))
 		r.Delete("/{alias}", delete.New(log, storage))
 	})
-
-	router.Delete("/url/{alias}", delete.New(log, storage))
+	// Swagger UI
+	router.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 

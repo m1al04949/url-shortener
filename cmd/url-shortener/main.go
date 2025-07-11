@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
+	_ "github.com/m1al04949/url-shortener/docs"
 	"github.com/m1al04949/url-shortener/internal/app"
-	_ "github.com/m1al04949/url-shortener/internal/lib/api/response"
 )
 
 // @title URL Shortener API

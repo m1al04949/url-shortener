@@ -1,0 +1,112 @@
+basePath: ./cmd/url-shortener
+definitions:
+  github_com_m1al04949_url-shortener_internal_lib_api_response.Response:
+    properties:
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+  internal_http-server_handlers_delete.Response:
+    properties:
+      alias:
+        type: string
+      response:
+        $ref: '#/definitions/github_com_m1al04949_url-shortener_internal_lib_api_response.Response'
+    type: object
+  internal_http-server_handlers_url_save.Request:
+    properties:
+      alias:
+        type: string
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  internal_http-server_handlers_url_save.Response:
+    properties:
+      alias:
+        type: string
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+    url: http://www.example.com/support
+  description: API сервиса для сокращения URL
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: URL Shortener API
+  version: "1.0"
+paths:
+  /url:
+    post:
+      consumes:
+      - application/json
+      description: Преобразует длинный URL в короткий
+      parameters:
+      - description: URL для сокращения
+        in: body
+        name: url
+        required: true
+        schema:
+          $ref: '#/definitions/internal_http-server_handlers_url_save.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_http-server_handlers_url_save.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_m1al04949_url-shortener_internal_lib_api_response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_m1al04949_url-shortener_internal_lib_api_response.Response'
+      summary: Создать короткую ссылку
+      tags:
+      - url
+  /url/{alias}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет короткий URL
+      parameters:
+      - description: Алиас короткой ссылки
+        in: path
+        name: alias
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted
+          schema:
+            $ref: '#/definitions/internal_http-server_handlers_delete.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/github_com_m1al04949_url-shortener_internal_lib_api_response.Response'
+        "404":
+          description: URL not found
+          schema:
+            $ref: '#/definitions/github_com_m1al04949_url-shortener_internal_lib_api_response.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_m1al04949_url-shortener_internal_lib_api_response.Response'
+      summary: Удалять короткую ссылку
+      tags:
+      - url
+swagger: "2.0"

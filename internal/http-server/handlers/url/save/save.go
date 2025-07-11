@@ -38,11 +38,11 @@ type URLSaver interface {
 // @Tags url
 // @Accept  json
 // @Produce  json
-// @Param   url body save.Request true "URL для сокращения"
-// @Success 200 {object} save.Response
+// @Param   url body Request true "URL для сокращения"
+// @Success 200 {object} Response
 // @Failure 400 {object} resp.Response
 // @Failure 500 {object} resp.Response
-// @Router /api [post]
+// @Router /url [post]
 func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.url.save.New"

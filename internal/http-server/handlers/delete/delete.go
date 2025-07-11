@@ -33,7 +33,7 @@ type URLDeleter interface {
 // @Failure 400 {object} resp.Response "Invalid request"
 // @Failure 404 {object} resp.Response "URL not found"
 // @Failure 500 {object} resp.Response "Internal server error"
-// @Router /api/{alias} [delete]
+// @Router /url/{alias} [delete]
 func New(log *slog.Logger, urlDeleter URLDeleter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.url.delete.New"
